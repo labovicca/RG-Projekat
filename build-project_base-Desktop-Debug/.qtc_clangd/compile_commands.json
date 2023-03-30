@@ -44,10 +44,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/stb_image.cpp"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/stb_image.cpp"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/stb_image.cpp"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/stb_image.cpp"
 },
 {
     "arguments": [
@@ -80,10 +80,10 @@
         "-ferror-limit=1000",
         "-x",
         "c",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/glad/src/glad.c"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/glad/src/glad.c"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/glad/src/glad.c"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/glad/src/glad.c"
 },
 {
     "arguments": [
@@ -129,10 +129,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui.cpp"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui.cpp"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui.cpp"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui.cpp"
 },
 {
     "arguments": [
@@ -178,10 +178,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_demo.cpp"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_demo.cpp"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_demo.cpp"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_demo.cpp"
 },
 {
     "arguments": [
@@ -227,10 +227,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_draw.cpp"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_draw.cpp"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_draw.cpp"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_draw.cpp"
 },
 {
     "arguments": [
@@ -276,10 +276,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_impl_glfw.cpp"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_impl_glfw.cpp"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_impl_glfw.cpp"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_impl_glfw.cpp"
 },
 {
     "arguments": [
@@ -325,10 +325,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_impl_opengl3.cpp"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_impl_opengl3.cpp"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_impl_opengl3.cpp"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_impl_opengl3.cpp"
 },
 {
     "arguments": [
@@ -374,10 +374,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_tables.cpp"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_tables.cpp"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_tables.cpp"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_tables.cpp"
 },
 {
     "arguments": [
@@ -423,10 +423,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_widgets.cpp"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_widgets.cpp"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/src/imgui_widgets.cpp"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/src/imgui_widgets.cpp"
 },
 {
     "arguments": [
@@ -472,10 +472,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++-header",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imconfig.h"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imconfig.h"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imconfig.h"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imconfig.h"
 },
 {
     "arguments": [
@@ -521,10 +521,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++-header",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imgui.h"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imgui.h"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imgui.h"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imgui.h"
 },
 {
     "arguments": [
@@ -570,10 +570,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++-header",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imgui_impl_glfw.h"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imgui_impl_glfw.h"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imgui_impl_glfw.h"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imgui_impl_glfw.h"
 },
 {
     "arguments": [
@@ -619,10 +619,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++-header",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imgui_impl_opengl3.h"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imgui_impl_opengl3.h"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imgui_impl_opengl3.h"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imgui_impl_opengl3.h"
 },
 {
     "arguments": [
@@ -668,10 +668,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++-header",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imgui_internal.h"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imgui_internal.h"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imgui_internal.h"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imgui_internal.h"
 },
 {
     "arguments": [
@@ -717,10 +717,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++-header",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imstb_rectpack.h"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imstb_rectpack.h"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imstb_rectpack.h"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imstb_rectpack.h"
 },
 {
     "arguments": [
@@ -766,10 +766,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++-header",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imstb_textedit.h"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imstb_textedit.h"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imstb_textedit.h"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imstb_textedit.h"
 },
 {
     "arguments": [
@@ -815,10 +815,10 @@
         "-ferror-limit=1000",
         "-x",
         "c++-header",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imstb_truetype.h"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imstb_truetype.h"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/libs/imgui/include/imstb_truetype.h"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/libs/imgui/include/imstb_truetype.h"
 },
 {
     "arguments": [
@@ -868,9 +868,9 @@
         "-ferror-limit=1000",
         "-x",
         "c++",
-        "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/src/main.cpp"
+        "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/src/main.cpp"
     ],
     "directory": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/build-project_base-Desktop-Debug/.qtc_clangd",
-    "file": "/home/matf-racunarska-grafika/Desktop/RG_projekat_2023/project_base/src/main.cpp"
+    "file": "/home/matf-racunarska-grafika/Desktop/RG-Projekat/project_base/src/main.cpp"
 }
 ]
