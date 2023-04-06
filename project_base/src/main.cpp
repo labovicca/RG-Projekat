@@ -30,6 +30,8 @@ unsigned int loadTexture(char const * path, bool gammaCorrection);
 
 unsigned int loadCubemap(vector<std::string> faces);
 
+void setLights(Shader shaderName);
+
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -44,16 +46,11 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-struct PointLight {
-    glm::vec3 position;
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
+// lightPos
+glm::vec3 lightPos(-4.5f, 2.5f, 2.0f);
 
-    float constant;
-    float linear;
-    float quadratic;
-};
+// spotlight
+bool spotlightOn = false;
 
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
@@ -63,6 +60,8 @@ struct ProgramState {
     glm::vec3 backpackPosition = glm::vec3(0.0f);
     float backpackScale = 10.0f;
     PointLight pointLight;
+    DirLight dirLight;
+    SpotLight spotLight;
     ProgramState()
             : camera(glm::vec3(0.0f, 0.0f, 3.0f)) {}
 
@@ -176,50 +175,50 @@ int main() {
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
     Shader boxShader("resources/shaders/box.vs", "resources/shaders/box.fs");
-    Shader vilaShader("resources/shaders/vila.vs", "resources/shaders/vila.fs");
+//    Shader vilaShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
 
     float boxVertices[] = {
-            -0.5f, -0.5f, -0.5f,0.0f,  0.0f,
-            0.5f, -0.5f, -0.5f,   1.0f,  0.0f,
-            0.5f,  0.5f, -0.5f,   1.0f,  1.0f,
-            0.5f,  0.5f, -0.5f,  1.0f,  1.0f,
-            -0.5f,  0.5f, -0.5f, 0.0f,  1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+            0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,
-            0.5f, -0.5f,  0.5f, 1.0f,  0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f,  1.0f,
-            0.5f,  0.5f,  0.5f,  1.0f,  1.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,
-            -0.5f, -0.5f,  0.5f,0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+            0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-            -0.5f,  0.5f,  0.5f, 1.0f,  0.0f,
-            -0.5f,  0.5f, -0.5f, 1.0f,  1.0f,
-            -0.5f, -0.5f, -0.5f, 0.0f,  1.0f,
-            -0.5f, -0.5f, -0.5f, 0.0f,  1.0f,
-            -0.5f, -0.5f,  0.5f, 0.0f,  0.0f,
-            -0.5f,  0.5f,  0.5f, 1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-            0.5f,  0.5f,  0.5f, 1.0f,  0.0f,
-            0.5f,  0.5f, -0.5f, 1.0f,  1.0f,
-            0.5f, -0.5f, -0.5f, 0.0f,  1.0f,
-            0.5f, -0.5f, -0.5f, 0.0f,  1.0f,
-            0.5f, -0.5f,  0.5f, 0.0f,  0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-            -0.5f, -0.5f, -0.5f,  0.0f,  1.0f,
-            0.5f, -0.5f, -0.5f,  1.0f,  1.0f,
-            0.5f, -0.5f,  0.5f,  1.0f,  0.0f,
-            0.5f, -0.5f,  0.5f,  1.0f,  0.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-            -0.5f,  0.5f, -0.5f, 0.0f,  1.0f,
-            0.5f,  0.5f, -0.5f, 1.0f,  1.0f,
-            0.5f,  0.5f,  0.5f, 1.0f,  0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f,  0.0f,
-            -0.5f,  0.5f,  0.5f, 0.0f,  0.0f,
-            -0.5f,  0.5f, -0.5f, 0.0f,  1.0f
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
 
     float skyboxVertices[] = {
@@ -278,16 +277,21 @@ int main() {
 
 
     // box VAO
-    unsigned int boxVAO, boxVBO;
+    unsigned int boxVBO, boxVAO;
     glGenVertexArrays(1, &boxVAO);
     glGenBuffers(1, &boxVBO);
-    glBindVertexArray(boxVAO);
+
     glBindBuffer(GL_ARRAY_BUFFER, boxVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
+
+    glBindVertexArray(boxVAO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
 
     // load cubemap textures
     vector<std::string> faces
@@ -306,29 +310,22 @@ int main() {
 
     // box texture
     stbi_set_flip_vertically_on_load(true);
-    unsigned int boxTexture = loadTexture(FileSystem::getPath("resources/textures/gliter.jpg").c_str(), true);
+    unsigned int boxDiffuse = loadTexture(FileSystem::getPath("resources/textures/gliter.jpg").c_str(), true);
+    unsigned int boxSpecular = loadTexture(FileSystem::getPath("resources/textures/gliter_specular.png").c_str(), true);
+    unsigned int boxAmbient = loadTexture(FileSystem::getPath("resources/textures/gliter_ambient.png").c_str(), true);
+
     stbi_set_flip_vertically_on_load(false);
 
     boxShader.use();
-    boxShader.setInt("texture1", 0);
+    boxShader.setInt("material.ambient", 0);
+    boxShader.setInt("material.diffuse", 1);
+    boxShader.setInt("material.specular", 2);
+
 
     // load models
     // -----------
     Model ourModel("resources/objects/island/island.obj");
     Model vilaModel(FileSystem::getPath("resources/objects/vila/vila.obj"));
-
-
-    PointLight& pointLight = programState->pointLight;
-    pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
-    pointLight.ambient = glm::vec3(0.1, 0.1, 0.1);
-    pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
-    pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
-
-    pointLight.constant = 1.0f;
-    pointLight.linear = 0.09f;
-    pointLight.quadratic = 0.032f;
-
-
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -354,16 +351,7 @@ int main() {
 
         // don't forget to enable shader before setting uniforms
         ourShader.use();
-        vilaShader.use();
-        pointLight.position = glm::vec3(4.0 * cos(currentFrame), 4.0f, 4.0 * sin(currentFrame));
-        ourShader.setVec3("pointLight.position", pointLight.position);
-        ourShader.setVec3("pointLight.ambient", pointLight.ambient);
-        ourShader.setVec3("pointLight.diffuse", pointLight.diffuse);
-        ourShader.setVec3("pointLight.specular", pointLight.specular);
-        ourShader.setFloat("pointLight.constant", pointLight.constant);
-        ourShader.setFloat("pointLight.linear", pointLight.linear);
-        ourShader.setFloat("pointLight.quadratic", pointLight.quadratic);
-        ourShader.setVec3("viewPosition", programState->camera.Position);
+        setLights(ourShader);
         ourShader.setFloat("material.shininess", 32.0f);
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
@@ -372,10 +360,6 @@ int main() {
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
-        vilaShader.setMat4("projection", projection);
-        vilaShader.setMat4("view", view);
-
-
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model,programState->backpackPosition); // translate it down so it's at the center of the scene
@@ -383,26 +367,39 @@ int main() {
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 
-        model = glm::translate(model, glm::vec3(0.0f, 0.5f, 0.0f));
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 5.7f, 0.0f));
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f,1.0f,0.0f));
-        model = glm::scale(model, glm::vec3(0.1f));	// it's a bit too big for our scene, so scale it down
-        vilaShader.setMat4("model", model);
-        vilaModel.Draw(vilaShader);
+        model = glm::scale(model, glm::vec3(0.9f));	// it's a bit too big for our scene, so scale it down
+        ourShader.setMat4("model", model);
+        vilaModel.Draw(ourShader);
 
         // box
-        glCullFace(GL_FRONT);
+        glDisable(GL_CULL_FACE);
+        // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, boxTexture);
+        glBindTexture(GL_TEXTURE_2D, boxDiffuse);
+
+        // bind specular map
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, boxSpecular);
+
+        // bind emission map
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, boxAmbient);
         boxShader.use();
+        setLights(boxShader);
+        boxShader.setFloat("material.shininess", 64.0f);
         boxShader.setMat4("projection", projection);
         boxShader.setMat4("view", view);
         glBindVertexArray(boxVAO);
-        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 3.0f, 0.0f));
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, -1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(1.0f));
         boxShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
 
         // draw skybox as last
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -565,6 +562,8 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
              << programState->camera.Position.y << " "
              << programState->camera.Position.z << '\n';
     }
+    if (key == GLFW_KEY_F && action == GLFW_PRESS)
+        spotlightOn = !spotlightOn;
 }
 
 unsigned int loadTexture(char const * path, bool gammaCorrection)
@@ -611,4 +610,41 @@ unsigned int loadTexture(char const * path, bool gammaCorrection)
     }
 
     return textureID;
+}
+
+void setLights(Shader shaderName){
+    shaderName.setVec3("light.position", lightPos);
+    shaderName.setVec3("viewPos", programState->camera.Position);
+
+    // directional light
+    shaderName.setVec3("dirLight.direction", 0.0f, -1.0, 0.0f);
+    shaderName.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+    shaderName.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+    shaderName.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+    //pointlight properties
+    shaderName.setVec3("pointLights[0].position", lightPos);
+    shaderName.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+    shaderName.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+    shaderName.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+    shaderName.setFloat("pointLights[0].constant", 1.0f);
+    shaderName.setFloat("pointLights[0].linear", 0.09f);
+    shaderName.setFloat("pointLights[0].quadratic", 0.032f);
+    // spotLight
+    shaderName.setVec3("spotLight.position", programState->camera.Position);
+    shaderName.setVec3("spotLight.direction", programState->camera.Front);
+    shaderName.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+    if(spotlightOn){
+        shaderName.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+        shaderName.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+    }
+    else{
+        shaderName.setVec3("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
+        shaderName.setVec3("spotLight.specular", 0.0f, 0.0f, 0.0f);
+    }
+
+    shaderName.setFloat("spotLight.constant", 1.0f);
+    shaderName.setFloat("spotLight.linear", 0.09f);
+    shaderName.setFloat("spotLight.quadratic", 0.032f);
+    shaderName.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+    shaderName.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 }
