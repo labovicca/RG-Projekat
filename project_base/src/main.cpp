@@ -312,7 +312,6 @@ int main() {
     boxShader.use();
     boxShader.setInt("texture1", 0);
 
-
     // load models
     // -----------
     Model ourModel("resources/objects/island/island.obj");
@@ -398,9 +397,9 @@ int main() {
         boxShader.setMat4("projection", projection);
         boxShader.setMat4("view", view);
         glBindVertexArray(boxVAO);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.1f));
+        model = glm::scale(model, glm::vec3(1.0f));
         boxShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glCullFace(GL_BACK);
