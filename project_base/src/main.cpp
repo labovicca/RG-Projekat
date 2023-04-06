@@ -30,8 +30,6 @@ unsigned int loadTexture(char const * path, bool gammaCorrection);
 
 unsigned int loadCubemap(vector<std::string> faces);
 
-//ananannana
-
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -178,6 +176,7 @@ int main() {
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
     Shader boxShader("resources/shaders/box.vs", "resources/shaders/box.fs");
+    Shader vilaShader("resources/shaders/vila.vs", "resources/shaders/vila.fs");
 
     float boxVertices[] = {
             -0.5f, -0.5f, -0.5f,0.0f,  0.0f,
@@ -307,7 +306,7 @@ int main() {
 
     // box texture
     stbi_set_flip_vertically_on_load(true);
-    unsigned int boxTexture = loadTexture(FileSystem::getPath("resources/textures/container.jpg").c_str(), true);
+    unsigned int boxTexture = loadTexture(FileSystem::getPath("resources/textures/gliter.jpg").c_str(), true);
     stbi_set_flip_vertically_on_load(false);
 
     boxShader.use();
@@ -317,6 +316,7 @@ int main() {
     // load models
     // -----------
     Model ourModel("resources/objects/island/island.obj");
+    Model vilaModel(FileSystem::getPath("resources/objects/vila/vila.obj"));
 
 
     PointLight& pointLight = programState->pointLight;
@@ -355,6 +355,7 @@ int main() {
 
         // don't forget to enable shader before setting uniforms
         ourShader.use();
+        vilaShader.use();
         pointLight.position = glm::vec3(4.0 * cos(currentFrame), 4.0f, 4.0 * sin(currentFrame));
         ourShader.setVec3("pointLight.position", pointLight.position);
         ourShader.setVec3("pointLight.ambient", pointLight.ambient);
@@ -372,12 +373,22 @@ int main() {
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
+        vilaShader.setMat4("projection", projection);
+        vilaShader.setMat4("view", view);
+
+
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model,programState->backpackPosition); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
+
+        model = glm::translate(model, glm::vec3(0.0f, 0.5f, 0.0f));
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f,1.0f,0.0f));
+        model = glm::scale(model, glm::vec3(0.1f));	// it's a bit too big for our scene, so scale it down
+        vilaShader.setMat4("model", model);
+        vilaModel.Draw(vilaShader);
 
         // box
         glCullFace(GL_FRONT);
