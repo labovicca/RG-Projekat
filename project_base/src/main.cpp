@@ -30,6 +30,8 @@ unsigned int loadTexture(char const * path, bool gammaCorrection);
 
 unsigned int loadCubemap(vector<std::string> faces);
 
+//ananannana
+
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
