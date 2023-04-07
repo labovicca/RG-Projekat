@@ -56,6 +56,7 @@ bool spotlightOn = false;
 
 bool hdr = true;
 float exposure = 0.5f;
+bool blinn = true;
 
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
@@ -454,6 +455,9 @@ int main() {
         glm::mat4 view = programState->camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
+        ourShader.setInt("blinn", blinn);
+
+        //std::cout << (blinn ? "Blinn-Phong" : "Phong") << std::endl;
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
@@ -700,6 +704,12 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         cout << programState->camera.Position.x << " "
              << programState->camera.Position.y << " "
              << programState->camera.Position.z << '\n';
+    }
+
+    if (key == GLFW_KEY_B && action == GLFW_PRESS)
+    {
+        blinn = !blinn;
+
     }
 
     if (key == GLFW_KEY_F && action == GLFW_PRESS)
