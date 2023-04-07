@@ -32,6 +32,8 @@ unsigned int loadCubemap(vector<std::string> faces);
 
 void setLights(Shader shaderName);
 
+void renderQuad();
+
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -51,6 +53,9 @@ glm::vec3 lightPos(-4.5f, 2.5f, 2.0f);
 
 // spotlight
 bool spotlightOn = false;
+
+bool hdr = true;
+float exposure = 0.5f;
 
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
@@ -175,7 +180,9 @@ int main() {
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
     Shader boxShader("resources/shaders/box.vs", "resources/shaders/box.fs");
-//    Shader vilaShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
+    Shader cloudShader("resources/shaders/clouds.vs", "resources/shaders/clouds.fs");
+    Shader starShader("resources/shaders/star.vs", "resources/shaders/star.fs");
+    Shader hdrShader("resources/shaders/hdr.vs", "resources/shaders/hdr.fs");
 
     float boxVertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
@@ -265,6 +272,17 @@ int main() {
          1.0f, -1.0f,  1.0f
     };
 
+    float transparentVertices[] = {
+            // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+            1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+    };
+
     // skybox VAO
     unsigned int skyboxVAO, skyboxVBO;
     glGenVertexArrays(1, &skyboxVAO);
@@ -292,6 +310,35 @@ int main() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
+    //transparent VAO
+    unsigned int transparentVAO, transparentVBO;
+    glGenVertexArrays(1, &transparentVAO);
+    glGenBuffers(1, &transparentVBO);
+    glBindVertexArray(transparentVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, transparentVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glBindVertexArray(0);
+
+    vector<glm::vec3> clouds
+    {
+        glm::vec3(-6.5f, 2.0f, -0.48f),
+        glm::vec3( 3.5f, 4.0f, 1.51f),
+        glm::vec3( 2.0f, 1.5f, 0.7f),
+        glm::vec3(-4.3f, 3.5f, -2.3f),
+        glm::vec3( 6.0f, 4.5f, -1.6f),
+        glm::vec3( 0.0f, 4.0f, -1.6f)
+
+    };
+
+    std::vector<glm::vec3> lightPositions;
+    lightPositions.push_back(glm::vec3( 0.0f,  117.3f, 25.5f)); // back light
+    // colors
+    std::vector<glm::vec3> lightColors;
+    lightColors.push_back(glm::vec3(50.0f, 50.0f, 50.0f));
 
     // load cubemap textures
     vector<std::string> faces
@@ -313,19 +360,51 @@ int main() {
     unsigned int boxDiffuse = loadTexture(FileSystem::getPath("resources/textures/gliter.jpg").c_str(), true);
     unsigned int boxSpecular = loadTexture(FileSystem::getPath("resources/textures/gliter_specular.png").c_str(), true);
     unsigned int boxAmbient = loadTexture(FileSystem::getPath("resources/textures/gliter_ambient.png").c_str(), true);
-
+    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/oblak2.png").c_str(), true);
     stbi_set_flip_vertically_on_load(false);
+
+    // configure floating point framebuffer
+    // ------------------------------------
+    unsigned int hdrFBO;
+    glGenFramebuffers(1, &hdrFBO);
+    // create floating point color buffer
+    unsigned int colorBuffer;
+    glGenTextures(1, &colorBuffer);
+    glBindTexture(GL_TEXTURE_2D, colorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // create depth buffer (renderbuffer)
+    unsigned int rboDepth;
+    glGenRenderbuffers(1, &rboDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
+    // attach buffers
+    glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    //room and hdr shader configuration
+    hdrShader.use();
+    hdrShader.setInt("hdrBuffer", 0);
 
     boxShader.use();
     boxShader.setInt("material.ambient", 0);
     boxShader.setInt("material.diffuse", 1);
     boxShader.setInt("material.specular", 2);
 
+    cloudShader.use();
+    cloudShader.setInt("texture1", 0);
 
     // load models
     // -----------
     Model ourModel("resources/objects/island/island.obj");
     Model vilaModel(FileSystem::getPath("resources/objects/vila/vila.obj"));
+    Model starModel("resources/objects/star/star.obj");
+    starModel.SetShaderTextureNamePrefix("material.");
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -342,6 +421,22 @@ int main() {
         // input
         // -----
         processInput(window);
+
+        // render
+
+        //rendering everything in the floating buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        //sort
+        // -----
+        std::sort(clouds.begin(), clouds.end(),
+                  [cameraPosition = programState->camera.Position](const glm::vec3& a, const glm::vec3& b) {
+                      float d1 = glm::distance(a, cameraPosition);
+                      float d2 = glm::distance(b, cameraPosition);
+                      return d1 > d2;
+                  });
 
 
         // render
@@ -370,9 +465,21 @@ int main() {
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 5.7f, 0.0f));
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f,1.0f,0.0f));
-        model = glm::scale(model, glm::vec3(0.9f));	// it's a bit too big for our scene, so scale it down
+        model = glm::scale(model, glm::vec3(0.9f));
         ourShader.setMat4("model", model);
         vilaModel.Draw(ourShader);
+
+        starShader.use();
+        starShader.setMat4("projection", projection);
+        starShader.setMat4("view", view);
+
+        // render star
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(8.1f,  6.7f, 1.1f));
+        model = glm::rotate(model, glm::radians(-135.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.15f));
+        starShader.setMat4("model", model);
+        starModel.Draw(starShader);
 
         // box
         glDisable(GL_CULL_FACE);
@@ -399,7 +506,30 @@ int main() {
         model = glm::scale(model, glm::vec3(1.0f));
         boxShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //clouds (blending)
+        cloudShader.use();
+        cloudShader.setMat4("projection",projection);
+        cloudShader.setMat4("view",view);
+        glBindVertexArray(transparentVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, transparentTexture);
+
+        for (const glm::vec3& c : clouds)
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, c);
+            model = glm::rotate(model, glm::radians(-90.0f),glm::vec3(0.0f,1.0f,0.0f));
+            model = glm::scale(model,glm::vec3(1.5f));
+            cloudShader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        }
+
+
         glEnable(GL_CULL_FACE);
+
+
 
         // draw skybox as last
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -414,6 +544,15 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         glDepthFunc(GL_LESS); // set depth function back to default
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        hdrShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, colorBuffer);
+        hdrShader.setInt("hdr", hdr);
+        hdrShader.setFloat("exposure", exposure);
+        renderQuad();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -562,8 +701,56 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
              << programState->camera.Position.y << " "
              << programState->camera.Position.z << '\n';
     }
+
     if (key == GLFW_KEY_F && action == GLFW_PRESS)
         spotlightOn = !spotlightOn;
+
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+    {
+        hdr = !hdr;
+
+    }
+
+    if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+    {
+        if (exposure > 0.0f)
+            exposure -= 0.1f;
+        else
+            exposure = 0.0f;
+    }
+    else if (key == GLFW_KEY_E && action == GLFW_PRESS)
+    {
+        exposure += 0.1f;
+    }
+}
+
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+    if (quadVAO == 0)
+    {
+        float quadVertices[] = {
+                // positions        // texture Coords
+                -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+                1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+                1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        };
+        // setup plane VAO
+        glGenVertexArrays(1, &quadVAO);
+        glGenBuffers(1, &quadVBO);
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    }
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
 }
 
 unsigned int loadTexture(char const * path, bool gammaCorrection)
