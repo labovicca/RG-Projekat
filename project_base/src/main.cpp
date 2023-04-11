@@ -774,7 +774,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         hdr = !hdr;
 
     }
-    if (key == GLFW_KEY_F && action == GLFW_PRESS)
+    if (key == GLFW_KEY_G && action == GLFW_PRESS)
     {
         bloom = !bloom;
 
