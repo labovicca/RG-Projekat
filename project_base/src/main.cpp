@@ -64,8 +64,8 @@ struct ProgramState {
     bool ImGuiEnabled = false;
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
-    glm::vec3 backpackPosition = glm::vec3(0.0f);
-    float backpackScale = 10.0f;
+    glm::vec3 islandPosition = glm::vec3(0.0f);
+    float islandScale = 10.0f;
     PointLight pointLight;
     DirLight dirLight;
     SpotLight spotLight;
@@ -179,7 +179,7 @@ int main() {
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
+    Shader ourShader("resources/shaders/model_lighting.vs", "resources/shaders/model_lighting.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
     Shader boxShader("resources/shaders/box.vs", "resources/shaders/box.fs");
     Shader cloudShader("resources/shaders/clouds.vs", "resources/shaders/clouds.fs");
@@ -457,7 +457,7 @@ int main() {
         // render
 
         //rendering everything in the floating buffer
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
@@ -494,8 +494,8 @@ int main() {
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model,programState->backpackPosition); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
+        model = glm::translate(model,programState->islandPosition); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(programState->islandScale));    // it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 
@@ -510,7 +510,7 @@ int main() {
         glDisable(GL_CULL_FACE);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(8.1f,  6.7f, 1.1f));
-        model = glm::rotate(model, glm::radians(170.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model,glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::scale(model, glm::vec3(0.2f));
         ourShader.setMat4("model", model);
         starModel.Draw(ourShader);
@@ -611,12 +611,21 @@ int main() {
 
        std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
 
+       if (programState->ImGuiEnabled)
+           DrawImGui(programState);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    glDeleteVertexArrays(1, &boxVAO);
+    glDeleteBuffers(1, &boxVBO);
+    glDeleteVertexArrays(1, &transparentVAO);
+    glDeleteBuffers(1, &transparentVBO);
+    glDeleteVertexArrays(1, &skyboxVAO);
+    glDeleteBuffers(1, &skyboxVAO);
 
     programState->SaveToFile("resources/program_state.txt");
     delete programState;
@@ -720,8 +729,8 @@ void DrawImGui(ProgramState *programState) {
         ImGui::Text("Hello text");
         ImGui::SliderFloat("Float slider", &f, 0.0, 1.0);
         ImGui::ColorEdit3("Background color", (float *) &programState->clearColor);
-        ImGui::DragFloat3("Backpack position", (float*)&programState->backpackPosition);
-        ImGui::DragFloat("Backpack scale", &programState->backpackScale, 0.05, 0.1, 4.0);
+        ImGui::DragFloat3("Island position", (float*)&programState->islandPosition);
+        ImGui::DragFloat("Island scale", &programState->islandScale, 0.05, 0.1, 4.0);
 
         ImGui::DragFloat("pointLight.constant", &programState->pointLight.constant, 0.05, 0.0, 1.0);
         ImGui::DragFloat("pointLight.linear", &programState->pointLight.linear, 0.05, 0.0, 1.0);
@@ -767,14 +776,16 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     }
 
     if (key == GLFW_KEY_F && action == GLFW_PRESS)
+    {
         spotlightOn = !spotlightOn;
+    }
 
     if (key == GLFW_KEY_1 && action == GLFW_PRESS)
     {
         hdr = !hdr;
 
     }
-    if (key == GLFW_KEY_G && action == GLFW_PRESS)
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS)
     {
         bloom = !bloom;
 
