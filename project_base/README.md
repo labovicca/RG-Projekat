@@ -22,7 +22,7 @@ Kretanje kamere:\
 `W` `A` `S` `D`\
 -Pomeranje misa je rotacija kamere\
 `ESC` Prekida izvrsavanje projekta
----
+
 Ukljucivanje/Iskljucivanje:\
 `B` Blinn\
 `F` SpotLight\
