@@ -28,8 +28,7 @@ Ukljucivanje/Iskljucivanje:\
 `F` SpotLight\
 `1` HDR\
 `2` Bloom\
-`Space` koordinate kamere
-
+`Space` koordinate kamere\
 `E` Povecavanje exposure-a\
 `Q` Smanjivanje exposure-a
 ---
@@ -38,12 +37,11 @@ ImGui:\
 
 ---
 ## Resursi:
-Svi objekti su skinuti sa [CGTrader](https://www.cgtrader.com/) , [Sketchfab](https://sketchfab.com)\
 [Ostrvo](https://rigmodels.com/model.php?view=Floating_Islands-3d-model__1AYDA78T3ZIFU5OAJZIVUJT5T&searchkeyword=island&manualsearch=1)\
 [Vila](https://rigmodels.com/model.php?view=Frost-Queen-3d-model__23CABI0B6KWD9PS83O5MSNVO9&searchkeyword=fairy&manualsearch=1)\
 [Zvezda](https://www.turbosquid.com/3d-models/20-face-star-3ds-free/535674)
 
-[Skybox](preuzet sa drugarevog projekta)
+Skybox(preuzet sa drugarevog projekta)
 
 ---
 Autor: ALeksandra Labovic 150/2019
