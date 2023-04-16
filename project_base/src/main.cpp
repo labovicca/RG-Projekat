@@ -71,7 +71,7 @@ struct ProgramState {
     DirLight dirLight;
     SpotLight spotLight;
     ProgramState()
-            : camera(glm::vec3(0.0f, 0.0f, 3.0f)) {}
+            : camera(glm::vec3(-1.97391f, 7.88671f, 26.1232f)) {}
 
     void SaveToFile(std::string filename);
 
@@ -741,7 +741,6 @@ void DrawImGui(ProgramState *programState) {
         ImGui::Text("You can move the star");
         ImGui::DragFloat3("Star position",(float*)&programState->starPosition);
         ImGui::End();
-        programState->starPosition = glm::vec3(8.1f,  6.7f, 1.1f);
     }
 
     {
@@ -794,6 +793,11 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_2 && action == GLFW_PRESS)
     {
         bloom = !bloom;
+
+    }
+    if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+    {
+        programState->starPosition = glm::vec3(8.1f,  6.7f, 1.1f);
 
     }
 

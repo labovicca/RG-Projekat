@@ -28,9 +28,12 @@ Ukljucivanje/Iskljucivanje:\
 `F` SpotLight\
 `1` HDR\
 `2` Bloom\
-`Space` koordinate kamere\
+`Space` Koordinate kamere\
 `E` Povecavanje exposure-a\
-`Q` Smanjivanje exposure-a
+`Q` Smanjivanje exposure-a\
+`F1` Pomeranje zvezde\
+`Z` Vracanje zvezde na prvobitnu lokaciju
+
 ---
 ImGui:\
 `F1` otvaranje/zatvaranje ImGui prozora
