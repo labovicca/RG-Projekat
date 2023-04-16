@@ -62,6 +62,7 @@ bool bloom = false;
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
     bool ImGuiEnabled = false;
+    glm::vec3 starPosition = glm::vec3(8.1f,  6.7f, 1.1f);
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
     glm::vec3 islandPosition = glm::vec3(0.0f);
@@ -88,7 +89,10 @@ void ProgramState::SaveToFile(std::string filename) {
         << camera.Position.z << '\n'
         << camera.Front.x << '\n'
         << camera.Front.y << '\n'
-        << camera.Front.z << '\n';
+        << camera.Front.z << '\n'
+        << starPosition.x << '\n'
+        << starPosition.y << '\n'
+        << starPosition.z << '\n';
 }
 
 void ProgramState::LoadFromFile(std::string filename) {
@@ -103,7 +107,10 @@ void ProgramState::LoadFromFile(std::string filename) {
            >> camera.Position.z
            >> camera.Front.x
            >> camera.Front.y
-           >> camera.Front.z;
+           >> camera.Front.z
+           >> starPosition.x
+           >> starPosition.y
+           >> starPosition.z;
     }
 }
 
@@ -160,8 +167,7 @@ int main() {
     ImGuiIO &io = ImGui::GetIO();
     (void) io;
 
-
-
+    ImGui::StyleColorsLight();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
 
@@ -185,6 +191,7 @@ int main() {
     Shader cloudShader("resources/shaders/clouds.vs", "resources/shaders/clouds.fs");
     Shader hdrShader("resources/shaders/hdr.vs", "resources/shaders/hdr.fs");
     Shader bloomShader("resources/shaders/blur.vs", "resources/shaders/blur.fs");
+    Shader starShader("resources/shaders/star.vs", "resources/shaders/star.fs");
 
     float boxVertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
@@ -434,7 +441,9 @@ int main() {
     // load models
     // -----------
     Model ourModel("resources/objects/island/island.obj");
+    ourModel.SetShaderTextureNamePrefix("material.");
     Model vilaModel(FileSystem::getPath("resources/objects/vila/vila.obj"));
+    vilaModel.SetShaderTextureNamePrefix("material.");
     Model starModel("resources/objects/star/star.obj");
     starModel.SetShaderTextureNamePrefix("material.");
 
@@ -507,13 +516,18 @@ int main() {
         vilaModel.Draw(ourShader);
 
         // render star
+        starShader.use();
+        starShader.setMat4("projection", projection);
+        starShader.setMat4("view", view);
+        starShader.setVec3("lightColor", glm::vec3(50.0f, 50.0f, 50.0f));
+
         glDisable(GL_CULL_FACE);
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(8.1f,  6.7f, 1.1f));
+        model = glm::translate(model, programState->starPosition);
         model = glm::rotate(model,glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::scale(model, glm::vec3(0.2f));
-        ourShader.setMat4("model", model);
-        starModel.Draw(ourShader);
+        starShader.setMat4("model", model);
+        starModel.Draw(starShader);
 
         // box
         // bind diffuse map
@@ -722,20 +736,12 @@ void DrawImGui(ProgramState *programState) {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-
     {
-        static float f = 0.0f;
-        ImGui::Begin("Hello window");
-        ImGui::Text("Hello text");
-        ImGui::SliderFloat("Float slider", &f, 0.0, 1.0);
-        ImGui::ColorEdit3("Background color", (float *) &programState->clearColor);
-        ImGui::DragFloat3("Island position", (float*)&programState->islandPosition);
-        ImGui::DragFloat("Island scale", &programState->islandScale, 0.05, 0.1, 4.0);
-
-        ImGui::DragFloat("pointLight.constant", &programState->pointLight.constant, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.linear", &programState->pointLight.linear, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.quadratic", &programState->pointLight.quadratic, 0.05, 0.0, 1.0);
+        ImGui::Begin("Window");
+        ImGui::Text("You can move the star");
+        ImGui::DragFloat3("Star position",(float*)&programState->starPosition);
         ImGui::End();
+        programState->starPosition = glm::vec3(8.1f,  6.7f, 1.1f);
     }
 
     {
