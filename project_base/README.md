@@ -11,6 +11,9 @@ Iz grupe A:
 Iz grupe B:
 - [x] HDR, Bloom
 
+[Snimak projekta](https://drive.google.com/file/d/11EKWa7ptqOiw_ILkwWxAD-u3ERopiwZz/view?usp=sharing)
+
+
 ## Uputstvo
 
 1. `git clone https://github.com/ivanaivaneza/rg-WinterWonderland.git`
