@@ -554,7 +554,7 @@ int main() {
         boxShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        //clouds (blending)
+        //clouds
         cloudShader.use();
         cloudShader.setMat4("projection",projection);
         cloudShader.setMat4("view",view);
@@ -915,9 +915,9 @@ void setLights(Shader shaderName){
         shaderName.setVec3("spotLight.specular", 0.0f, 0.0f, 0.0f);
     }
 
-    shaderName.setFloat("spotLight.constant", 1.0f);
+    shaderName.setFloat("spotLight.constant", 0.0f);
     shaderName.setFloat("spotLight.linear", 0.09f);
-    shaderName.setFloat("spotLight.quadratic", 0.032f);
+    shaderName.setFloat("spotLight.quadratic", 0.0f);
     shaderName.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
     shaderName.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 }
