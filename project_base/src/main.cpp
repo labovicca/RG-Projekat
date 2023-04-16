@@ -519,7 +519,7 @@ int main() {
         starShader.use();
         starShader.setMat4("projection", projection);
         starShader.setMat4("view", view);
-        starShader.setVec3("lightColor", glm::vec3(50.0f, 50.0f, 50.0f));
+        starShader.setVec3("lightColor", glm::vec3(50.0f, 50.0f, 0.0f));
 
         glDisable(GL_CULL_FACE);
         model = glm::mat4(1.0f);
@@ -623,7 +623,7 @@ int main() {
         hdrShader.setFloat("exposure", exposure);
         renderQuad();
 
-       std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
+       //std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
 
        if (programState->ImGuiEnabled)
            DrawImGui(programState);
